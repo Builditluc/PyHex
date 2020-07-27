@@ -1,113 +1,39 @@
 # PyHex
 # Made by Builditluc
 
-import curses, time
+import curses
+from base import Application, Window
 
 
-class Window(object):
-    def __init__(self, stdscr, application):
-        super(__class__, self).__init__()
+class PyHex(Window):
+    def __init__(self, *args, **kwargs):
+        super(__class__, self).__init__(*args, **kwargs)
+        self.initColors()
 
-        # Saves the Screen of the Window and the parent application in a variable
-        self.stdscr: curses.window = stdscr
-        self.application: Application = application
+        # Hiding the Cursor
+        self.setCursorState(0)
 
-        # Creating the variables of the size of the Window
-        self.width = int
-        self.height = int
+        # Creating the variables for the title
+        self.title = "PyHex - A Python Hex Editor"
 
-        # Creating the variables for the Keyinput
-        self.isKeyPressed = False
-        self.keyPressed = int
+        self.title_x = int
+        self.title_y = 1
 
     def initColors(self):
-        """
-        Function for initiating the colors of a Window.
-        Must be called manually.
-        """
-        pass
+        curses.start_color()
+        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)  # Plaintext color
+        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)  # Title color
 
     def update(self):
-        """
-        This function will be called every time the Window updates.
-        Mostly, you will do calculations of coordinates for the drawing in here.
-        """
-        pass
+        # Calculating the coordinates of the title
+        self.title_x = int((self.width // 2) - (len(self.title) // 2) - len(self.title) % 2)
 
     def lateUpdate(self):
-        """
-        This function will be called every time after the update function.
-        Mostly, you will draw things on the screen here.
-        """
-        pass
+        # Drawing the title
+        self.drawText(self.title_y, self.title_x,
+                      self.title, 2)
 
-    def _update(self):
-        """
-        This function will be called from the Application and calls
-        functions like update or lateUpdate.
-        Do not change anything in here!
-        """
-        self.height, self.width = self.stdscr.getmaxyx()
-
-        self.update()
-        self.lateUpdate()
-
-        # Refreshing the Screen at the end of the Frame
-        self._updateScreen()
-
-    def _updateScreen(self):
-        """
-        This function just refreshes the Screen.
-        """
-        self.stdscr.refresh()
-
-    def drawText(self, y, x, text, color_code):
-        """
-        This function draws text on the screen
-        :param y: The y-Coordinate
-        :param x: The x-Coordinate
-        :param text: The text that will be drawn at the Coordinates
-        :param color_code: The Code of the Color Pair you want to use for the text
-        """
-        self.stdscr.attron(curses.A_BOLD)
-        self.stdscr.attron(curses.color_pair(color_code))
-
-        self.stdscr.addstr(y, x, text)
-
-        self.stdscr.attroff(curses.A_BOLD)
-        self.stdscr.attroff(curses.color_pair(color_code))
-
-
-class Application(object):
-    COLORMODE: bool
-    NODELAY: bool
-
-    def __init__(self):
-        super(__class__, self).__init__()
-        time.sleep(0.5)
-
-        # First, initiating the Screen and defining a variable for the MainWindow of the Application
-        self.stdscr = curses.initscr()
-        self.window = None
-
-        # Check, if the terminal supports colors and activates the NoDelay mode, if enabled
-        self.COLORMODE = curses.has_colors()
-        self.NODELAY = False
-        if self.NODELAY:
-            self.stdscr.nodelay(True)
-
-    def setMainWindow(self, window: Window):
-        """
-        This function sets the MainWindow of the application
-        :param window: The Window
-        """
-        self.window = window
-
-    def run(self, time_wait=0.15):
-        """
-        This function starts the Programm
-        :param time_wait: Time to wait between the frame updates
-        """
-        while True:
-            self.window._update()
-            time.sleep(time_wait)
+if __name__ == '__main__':
+    app: Application = Application()
+    app.setMainWindow(PyHex(app.stdscr, app))
+    app.run()
