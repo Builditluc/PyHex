@@ -79,7 +79,7 @@ class Window(object):
 
 
 class Application(object):
-    COLORMODEL: bool
+    COLORMODE: bool
     NODELAY: bool
 
     def __init__(self):
