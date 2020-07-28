@@ -50,6 +50,10 @@ class Window(object):
         self.keyPressed = self.stdscr.getch()
 
         self.update()
+
+        # Clear the Screen
+        self.stdscr.clear()
+
         self.lateUpdate()
 
         # Refreshing the Screen at the end of the Frame
@@ -85,7 +89,6 @@ class Window(object):
         :param state: 2 - Makes the Cursor highly visible
         """
         curses.curs_set(state)
-
 
 class Application(object):
     COLORMODE: bool
