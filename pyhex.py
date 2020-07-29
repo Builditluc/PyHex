@@ -1,3 +1,4 @@
+#!/bin/env python3.8
 # PyHex
 # Made by Builditluc
 
