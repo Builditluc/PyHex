@@ -92,7 +92,7 @@ class PyHex(Window):
         self.decoded_title_y = 1
 
         # The File
-        self.filename = "test_file.txt"
+        self.filename = sys.argv[1]
         self.file = HexFile(self.filename, self.encoded_title_len)
         self.file.start()
 
@@ -102,7 +102,6 @@ class PyHex(Window):
         curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)  # Title color
 
     def update(self):
-
         if self.keyPressed == ord("q"):
             sys.exit()
         # Calculating the coordinates of the title
