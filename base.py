@@ -40,6 +40,12 @@ class Window(object):
         """
         pass
 
+    def checkKeys(self):
+        """
+        This function will be called every frame.
+        """
+        pass
+
     def _update(self):
         """
         This function will be called from the Application and calls
@@ -48,16 +54,18 @@ class Window(object):
         """
         self.height, self.width = self.stdscr.getmaxyx()
         self.keyPressed = self.stdscr.getch()
+        self.checkKeys()
 
         self.update()
 
         # Clear the Screen
-        self.stdscr.clear()
+        self.stdscr.erase()
 
         self.lateUpdate()
 
         # Refreshing the Screen at the end of the Frame
         self._updateScreen()
+
 
     def _updateScreen(self):
         """
@@ -100,7 +108,11 @@ class Application(object):
 
         # First, initiating the Screen and defining a variable for the MainWindow of the Application
         self.stdscr = curses.initscr()
+        self.stdscr.keypad(True)
         self.window = None
+
+        curses.noecho()
+        curses.cbreak()
 
         # Check, if the terminal supports colors and activates the NoDelay mode, if enabled
         self.COLORMODE = curses.has_colors()
@@ -115,7 +127,7 @@ class Application(object):
         """
         self.window = window
 
-    def run(self, time_wait=0.15):
+    def run(self, time_wait=0.015):
         """
         This function starts the Programm
         :param time_wait: Time to wait between the frame updates
