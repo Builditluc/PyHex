@@ -1,8 +1,7 @@
-#!/bin/env python3.8
 # PyHex
 # Made by Builditluc
 
-import curses, sys
+import curses, curses.ascii ,sys
 from base import Application, Window
 
 
@@ -115,7 +114,7 @@ class PyHex(Window):
         curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)  # Selected color
 
     def checkKeys(self):
-        if self.keyPressed == ord("q"):
+        if self.keyPressed == curses.ascii.ESC:
             sys.exit()
 
         if self.keyPressed == curses.KEY_UP:
@@ -146,6 +145,7 @@ class PyHex(Window):
             offset = "0" * (self.offset_len - len(str(offset))) + str(offset)
             self.offset_content.append(offset)
 
+
     def lateUpdate(self):
         # Drawing the title
         self.drawText(self.title_y, self.title_x,
@@ -168,7 +168,7 @@ class PyHex(Window):
         x = self.encoded_title_x
         x_offset = 0
 
-        lines = self.file.hex_array[self.top_line:self.max_lines + self.top_line]
+        lines = self.file.hex_array[self.top_line:self.top_line + self.max_lines]
 
         for i, line in enumerate(lines):
             for byte in line:
@@ -190,6 +190,13 @@ class PyHex(Window):
             self.drawText(y, x, offset, 1)
             y += 1
 
+        # DEBUG
+        self.drawText(2, self.title_x, "DEBUG:", 2)
+        self.drawText(3, self.title_x + 4, "self.top_line : " + str(self.top_line), 1)
+        self.drawText(4, self.title_x + 4, "self.bottom_line : " + str(self.bottom_line), 1)
+        self.drawText(5, self.title_x + 4, "self.max_lines : " + str(self.max_lines), 1)
+        self.drawText(6, self.title_x + 4, "self.current : " + str(self.current), 1)
+
     def scroll(self, direction):
         """
         Scrolling the window when pressing up/down arrow keys
@@ -200,7 +207,7 @@ class PyHex(Window):
 
         # Up direction scroll overflow
         # current cursor position is 0, but top position is greater than 0
-        if (direction == self.UP) and (self.top_line > 0 and self.current == 0):
+        if (direction == self.UP) and (self.top_line >= 0 and self.current == 0):
             self.top_line += direction
 
         # Down direction scroll overflow
