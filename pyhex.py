@@ -2,7 +2,7 @@
 # PyHex
 # Made by Builditluc
 
-import curses
+import curses, sys
 from base import Application, Window
 
 
@@ -102,6 +102,9 @@ class PyHex(Window):
         curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)  # Title color
 
     def update(self):
+
+        if self.keyPressed == ord("q"):
+            sys.exit()
         # Calculating the coordinates of the title
         self.title_x = int((self.width // 2) - (len(self.title) // 2) - len(self.title) % 2)
 
