@@ -101,8 +101,8 @@ class PyHex(Window):
         self.decoded_title_y = 1
 
         # The File
-        # self.filename = sys.argv[1]
-        self.filename = "base.py"
+        self.filename = sys.argv[1]
+        #self.filename = "base.py"
         self.file = HexFile(self.filename, self.encoded_title_len)
         self.file.start()
 
