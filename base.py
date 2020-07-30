@@ -1,10 +1,15 @@
-# PyHex
-# Made by Builditluc
+"""
+Simple classes for the PyHex Window and Application
+"""
 
-import curses, time
+import curses
+import time
 
 
-class Window(object):
+class Window:
+    """
+    Simple class for a curses Window
+    """
     def __init__(self, stdscr, application):
         super(__class__, self).__init__()
 
@@ -17,79 +22,75 @@ class Window(object):
         self.height = int
 
         # Creating the variable for the Keyinput
-        self.keyPressed = int
+        self.key_pressed = int
 
-    def initColors(self):
+    def init_colors(self):
         """
         Function for initiating the colors of a Window.
         Must be called manually.
         """
-        pass
 
     def update(self):
         """
         This function will be called every time the Window updates.
         Mostly, you will do calculations of coordinates for the drawing in here.
         """
-        pass
 
-    def lateUpdate(self):
+    def late_update(self):
         """
         This function will be called every time after the update function.
         Mostly, you will draw things on the screen here.
         """
-        pass
 
-    def checkKeys(self):
+    def check_keys(self):
         """
         This function will be called every frame.
         """
-        pass
 
-    def _update(self):
+    def window_update(self):
         """
         This function will be called from the Application and calls
         functions like update or lateUpdate.
         Do not change anything in here!
         """
         self.height, self.width = self.stdscr.getmaxyx()
-        self.keyPressed = self.stdscr.getch()
-        self.checkKeys()
+        self.key_pressed = self.stdscr.getch()
+        self.check_keys()
 
         self.update()
 
         # Clear the Screen
         self.stdscr.erase()
 
-        self.lateUpdate()
+        self.late_update()
 
         # Refreshing the Screen at the end of the Frame
-        self._updateScreen()
+        self._update_screen()
 
-
-    def _updateScreen(self):
+    def _update_screen(self):
         """
         This function just refreshes the Screen.
         """
         self.stdscr.refresh()
 
-    def drawText(self, y, x, text, color_code):
+    def draw_text(self, y_coord, x_coord, text, color_code):
         """
         This function draws text on the screen
-        :param y: The y-Coordinate
-        :param x: The x-Coordinate
+        :param y_coord: The y-Coordinate
+        :param x_coord: The x_coord-Coordinate
         :param text: The text that will be drawn at the Coordinates
         :param color_code: The Code of the Color Pair you want to use for the text
         """
         self.stdscr.attron(curses.A_BOLD)
         self.stdscr.attron(curses.color_pair(color_code))
 
-        self.stdscr.addstr(y, x, text)
+        self.stdscr.addstr(y_coord, x_coord, text)
 
         self.stdscr.attroff(curses.A_BOLD)
         self.stdscr.attroff(curses.color_pair(color_code))
 
-    def setCursorState(self, state: int):
+    @staticmethod
+    def set_cursor_state(state: int):
         """
         Changes the Cursor in the window
         :param state: 0 - Hides the Cursor
@@ -98,9 +99,13 @@ class Window(object):
         """
         curses.curs_set(state)
 
-class Application(object):
-    COLORMODE: bool
-    NODELAY: bool
+
+class Application:
+    """
+    Simple class for a application managing a window
+    """
+    colormode: bool
+    no_delay: bool
 
     def __init__(self):
         super(__class__, self).__init__()
@@ -115,12 +120,12 @@ class Application(object):
         curses.cbreak()
 
         # Check, if the terminal supports colors and activates the NoDelay mode, if enabled
-        self.COLORMODE = curses.has_colors()
-        self.NODELAY = True
-        if self.NODELAY:
+        self.colormode = curses.has_colors()
+        self.no_delay = True
+        if self.no_delay:
             self.stdscr.nodelay(True)
 
-    def setMainWindow(self, window: Window):
+    def set_main_window(self, window: Window):
         """
         This function sets the MainWindow of the application
         :param window: The Window
@@ -133,5 +138,5 @@ class Application(object):
         :param time_wait: Time to wait between the frame updates
         """
         while True:
-            self.window._update()
+            self.window.window_update()
             time.sleep(time_wait)
