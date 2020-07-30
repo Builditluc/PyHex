@@ -53,7 +53,7 @@ class HexFile(object):
             line.append(byte)
             i += 1
 
-        if line != []:
+        if line:
             new_array.append(line)
 
         self.hex_array = new_array
@@ -62,10 +62,10 @@ class HexFile(object):
 class PyHex(Window):
     def __init__(self, *args, **kwargs):
         super(__class__, self).__init__(*args, **kwargs)
-        self.initColors()
+        self.init_colors()
 
         # Hiding the Cursor
-        self.setCursorState(0)
+        self.set_cursor_state(0)
 
         self.max_lines = curses.LINES - 2  # Max number of lines on the screen
         self.current = 0  # The selected line
@@ -108,19 +108,19 @@ class PyHex(Window):
 
         self.bottom_line = len(self.file.hex_array)
 
-    def initColors(self):
+    def init_colors(self):
         curses.start_color()
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)  # Plaintext color
         curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)  # Title color
         curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)  # Selected color
 
-    def checkKeys(self):
-        if self.keyPressed == curses.ascii.ESC:
+    def check_keys(self):
+        if self.key_pressed == curses.ascii.ESC:
             sys.exit()
 
-        if self.keyPressed == curses.KEY_UP:
+        if self.key_pressed == curses.KEY_UP:
             self.scroll(self.UP)
-        elif self.keyPressed == curses.KEY_DOWN:
+        elif self.key_pressed == curses.KEY_DOWN:
             self.scroll(self.DOWN)
 
     def update(self):
@@ -147,22 +147,22 @@ class PyHex(Window):
             self.offset_content.append(offset)
 
 
-    def lateUpdate(self):
+    def late_update(self):
         # Drawing the title
-        self.drawText(self.title_y, self.title_x,
-                      self.title, 2)
+        self.draw_text(self.title_y, self.title_x,
+                       self.title, 2)
 
         # Drawing the Offset text
-        self.drawText(self.offset_title_y, self.offset_title_x,
-                      self.offset_title, 1)
+        self.draw_text(self.offset_title_y, self.offset_title_x,
+                       self.offset_title, 1)
 
         # Drawing the Encoded text
-        self.drawText(self.encoded_title_y, self.encoded_title_x,
-                      self.encoded_title, 1)
+        self.draw_text(self.encoded_title_y, self.encoded_title_x,
+                       self.encoded_title, 1)
 
         # Drawing the Decoded title
-        self.drawText(self.decoded_title_y, self.decoded_title_x,
-                      self.decoded_title, 1)
+        self.draw_text(self.decoded_title_y, self.decoded_title_x,
+                       self.decoded_title, 1)
 
         # Drawing the Content of the File
         y = self.encoded_title_y + 1
@@ -174,9 +174,9 @@ class PyHex(Window):
         for i, line in enumerate(lines):
             for byte in line:
                 if i == self.current:
-                    self.drawText(y, x + x_offset, byte, 3)
+                    self.draw_text(y, x + x_offset, byte, 3)
                 else:
-                    self.drawText(y, x + x_offset, byte, 1)
+                    self.draw_text(y, x + x_offset, byte, 1)
                 x_offset += 3
             x_offset = 0
             y += 1
@@ -188,15 +188,15 @@ class PyHex(Window):
         offsets = self.offset_content[self.top_line:self.max_lines + self.top_line]
 
         for offset in offsets:
-            self.drawText(y, x, offset, 1)
+            self.draw_text(y, x, offset, 1)
             y += 1
 
         # DEBUG
-        self.drawText(2, self.title_x, "DEBUG:", 2)
-        self.drawText(3, self.title_x + 4, "self.top_line : " + str(self.top_line), 1)
-        self.drawText(4, self.title_x + 4, "self.bottom_line : " + str(self.bottom_line), 1)
-        self.drawText(5, self.title_x + 4, "self.max_lines : " + str(self.max_lines), 1)
-        self.drawText(6, self.title_x + 4, "self.current : " + str(self.current), 1)
+        #self.draw_text(2, self.title_x, "DEBUG:", 2)
+        #self.draw_text(3, self.title_x + 4, "self.top_line : " + str(self.top_line), 1)
+        #self.draw_text(4, self.title_x + 4, "self.bottom_line : " + str(self.bottom_line), 1)
+        #self.draw_text(5, self.title_x + 4, "self.max_lines : " + str(self.max_lines), 1)
+        #self.draw_text(6, self.title_x + 4, "self.current : " + str(self.current), 1)
 
     def scroll(self, direction):
         """
@@ -208,8 +208,9 @@ class PyHex(Window):
 
         # Up direction scroll overflow
         # current cursor position is 0, but top position is greater than 0
-        if (direction == self.UP) and (self.top_line >= 0 and self.current == 0):
+        if (direction == self.UP) and (self.top_line > 0 and self.current == 0):
             self.top_line += direction
+            return
 
         # Down direction scroll overflow
         # next cursor position touch the max lines, but absolute position of max lines could not touch the bottom
@@ -232,5 +233,5 @@ class PyHex(Window):
 
 if __name__ == '__main__':
     app: Application = Application()
-    app.setMainWindow(PyHex(app.stdscr, app))
+    app.set_main_window(PyHex(app.stdscr, app))
     app.run(time_wait=0)
