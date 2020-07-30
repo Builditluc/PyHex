@@ -14,6 +14,7 @@ class HexFile:
     This is a class for reading a file and convert
     it to hex
     """
+
     def __init__(self, filename: str, columns: int):
         super(__class__, self).__init__()
         self.columns = columns
@@ -77,6 +78,7 @@ class PyHex(Window):
     This is the PyHex Window that is
     displayed when the program starts
     """
+
     # pylint: disable=too-many-instance-attributes
     # pylint: disable=no-member
     def __init__(self, *args, **kwargs):
@@ -89,7 +91,7 @@ class PyHex(Window):
         self.max_lines = curses.LINES - 2  # Max number of lines on the screen
         self.current = 0  # The selected line
         self.top_line = 0  # The line at the top of the screen
-        self.bottom_line = 0 # The line at the bottom of the screen
+        self.bottom_line = 0  # The line at the bottom of the screen
 
         self.up_scroll = -1
         self.down_scroll = 1
@@ -122,7 +124,7 @@ class PyHex(Window):
 
         # The File
         self.filename = sys.argv[1]
-        #self.filename = "base.py"
+        # self.filename = "base.py"
         self.file = HexFile(self.filename, self.encoded_title_len)
         self.file.start()
 
@@ -166,7 +168,6 @@ class PyHex(Window):
             offset = "0" * (self.offset_len - len(str(offset))) + str(offset)
             self.offset_content.append(offset)
 
-
     def late_update(self):
         # Drawing the title
         self.draw_text(self.title_y, self.title_x,
@@ -192,6 +193,8 @@ class PyHex(Window):
         lines = self.file.hex_array[self.top_line:self.top_line + self.max_lines]
 
         for i, line in enumerate(lines):
+            if i == self.current:
+                self.draw_text(y_coord, x_coord, " "*((self.encoded_title_len*3)-1), 3)
             for byte in line:
                 if i == self.current:
                     self.draw_text(y_coord, x_coord + x_offset, byte, 3)
@@ -212,11 +215,11 @@ class PyHex(Window):
             y_coord += 1
 
         # DEBUG
-        #self.draw_text(2, self.title_x, "DEBUG:", 2)
-        #self.draw_text(3, self.title_x + 4, "self.top_line : " + str(self.top_line), 1)
-        #self.draw_text(4, self.title_x + 4, "self.bottom_line : " + str(self.bottom_line), 1)
-        #self.draw_text(5, self.title_x + 4, "self.max_lines : " + str(self.max_lines), 1)
-        #self.draw_text(6, self.title_x + 4, "self.current : " + str(self.current), 1)
+        # self.draw_text(2, self.title_x, "DEBUG:", 2)
+        # self.draw_text(3, self.title_x + 4, "self.top_line : " + str(self.top_line), 1)
+        # self.draw_text(4, self.title_x + 4, "self.bottom_line : " + str(self.bottom_line), 1)
+        # self.draw_text(5, self.title_x + 4, "self.max_lines : " + str(self.max_lines), 1)
+        # self.draw_text(6, self.title_x + 4, "self.current : " + str(self.current), 1)
 
     def scroll(self, direction):
         """
@@ -249,7 +252,7 @@ class PyHex(Window):
         # Scroll down
         # next cursor position is above max lines,
         # and absolute position of next cursor could not touch the bottom
-        if (direction == self.down_scroll) and (next_line < self.max_lines)\
+        if (direction == self.down_scroll) and (next_line < self.max_lines) \
                 and (self.top_line + next_line < self.bottom_line):
             self.current = next_line
             return
