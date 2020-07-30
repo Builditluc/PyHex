@@ -31,12 +31,13 @@ python3 pyhex.py <file_name>
 
 ### On Windows 10
 
-You need to install python 3.8 from the [python website](https://www.python.org/). <br>
+You need to install python 3.8 from the [python website](https://www.python.org/) <br>
 After that install `windows-curses`:
 ```
 pip install windows-curses
 ```
 
+You need to install [git](https://git-scm.com/download/win) <br>
 Then clone this repository to any folder you want:
 ```
 git clone https://github.com/Builditluc/PyHex.git
