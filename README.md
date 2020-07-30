@@ -77,4 +77,4 @@ py pyhex.py <file_name>
 
 Note:  if `py` don't work try to use `python` instead
     
-    And for any problems regarding windows, you should have a look at [this](https://wiki.archlinux.org/index.php/Installation_guide)https://wiki.archlinux.org/index.php/Installation_guidehttps://wiki.archlinux.org/index.php/Installation_guide
+And for any problems regarding windows, you should have a look at [this](https://wiki.archlinux.org/index.php/Installation_guide)
