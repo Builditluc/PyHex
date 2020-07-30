@@ -1,4 +1,4 @@
-pacman -S python3pacman -S python3# PyHex
+# PyHex
 
 `PyHex` is a simple python hex viewer for the terminal
 
