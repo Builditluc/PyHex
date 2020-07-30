@@ -137,7 +137,7 @@ class PyHex(Window):
         curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)  # Selected color
 
     def check_keys(self):
-        if self.key_pressed == curses.ascii.ESC:
+        if self.key_pressed == curses.ascii.ESC or self.key_pressed == ord("q"):
             sys.exit()
 
         if self.key_pressed == curses.KEY_UP:
