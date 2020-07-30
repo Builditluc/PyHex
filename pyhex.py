@@ -34,10 +34,13 @@ class HexFile:
         self._process_content()
         self._format_content()
 
-    def read_file(self):
+    def decode_hex(self):
         """
-        Read the file in binary mode
+        This function decodes the hex content of the file to ascii
         """
+        pass
+
+    def _read_file(self):
         self.file_content = open(self.filename, "rb").readlines()
 
     def _process_content(self):
