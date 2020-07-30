@@ -37,7 +37,7 @@ After that install `windows-curses`:
 pip install windows-curses
 ```
 
-You need to install [git](https://git-scm.com/download/win) <br>
+You need to install [git](https://git-scm.com/download/win), if you haven't installed it yet <br>
 Then clone this repository to any folder you want:
 ```
 git clone https://github.com/Builditluc/PyHex.git
