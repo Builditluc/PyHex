@@ -97,7 +97,7 @@ class PyHex(Window):
         self.down_scroll = 1
 
         # Creating the variables for the title
-        self.title = "PyHex - A Python Hex Editor"
+        self.title = "PyHex - A Python Hex Viewer"
 
         self.title_x = int
         self.title_y = 0
