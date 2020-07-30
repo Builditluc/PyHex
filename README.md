@@ -57,12 +57,13 @@ If you want to be able to use the file, also when not in the cloned directory, y
 
 ### On Windows 10
 
-You need to install python 3.8 from the [python website](https://www.python.org/). <br>
+You need to install python 3.8 from the [python website](https://www.python.org/) <br>
 After that install `windows-curses`:
 ```
 pip install windows-curses
 ```
 
+You need to install [git](https://git-scm.com/download/win), if you haven't installed it yet <br>
 Then clone this repository to any folder you want:
 ```
 
