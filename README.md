@@ -54,7 +54,7 @@ git clone https://github.com/Builditluc/PyHex.git
 
 Now you can view any file in `PyHex`:
 ```
-python3 pyhex.py <file_name>
+./pyhex.py <file_name>
 ```
 
 If you want to be able to use the file, also when not in the cloned directory, you can add it to a directory that is in the path, such as `/usr/bin`.
@@ -71,7 +71,6 @@ pip install windows-curses
 You need to install [git](https://git-scm.com/download/win), if you haven't installed it yet <br>
 Then clone this repository to any folder you want:
 ```
-
 git clone https://github.com/Builditluc/PyHex.git
 ```
 
