@@ -9,10 +9,10 @@
 
 ## Preview
 Displays the Offset and the content of the currently opened file. (Decoded text will be added soon)
-![](https://i.imgur.com/PdXMugu.png)
+![](https://i.imgur.com/aBsQnNl.png)
 
 Supports scrolling with the arrow keys
-![](https://i.imgur.com/B50L79O.png)
+![](https://i.imgur.com/iT2oylh.png)
 
 ## Installation
 
