@@ -1,4 +1,4 @@
-pacman -S python3# PyHex
+pacman -S python3pacman -S python3# PyHex
 
 `PyHex` is a simple python hex viewer for the terminal
 
@@ -36,7 +36,18 @@ Fedora:
 dnf install python3
 ```
 
+
+
+
+
+
+
 MacOS: You need to install python 3.8 from the [python website](https://www.python.org/). <br>
+ 
+ 
+ 
+ <br>
+ 
  
 
 Then clone this repository to any folder you want:
