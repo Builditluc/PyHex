@@ -30,7 +30,7 @@ class HexFile:
         This function begins the process of reading a file
         and converting it to hex
         """
-        self.read_file()
+        self._read_file()
         self._process_content()
         self._format_content()
 
@@ -38,7 +38,6 @@ class HexFile:
         """
         This function decodes the hex content of the file to ascii
         """
-        pass
 
     def _read_file(self):
         self.file_content = open(self.filename, "rb").readlines()
