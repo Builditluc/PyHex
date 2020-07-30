@@ -15,6 +15,7 @@ Supports scrolling with the arrow keys
 *... and other POSIX environments.*
 
 You need to install python 3.8, if you haven't installed it yet:
+
 Debian and debian deriatives:
 ```
 apt install python3.8
@@ -35,8 +36,9 @@ Fedora:
 dnf install python3
 ```
 
-
-
+MacOS: You need to install python 3.8 from the [python website](https://www.python.org/). 
+    
+dnf install python37
 Then clone this repository to any folder you want:
 ```
 git clone https://github.com/Builditluc/PyHex.git
