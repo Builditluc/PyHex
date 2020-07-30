@@ -36,19 +36,9 @@ Fedora:
 dnf install python3
 ```
 
-
-
-
-
-
-
-MacOS: You need to install python 3.8 from the [python website](https://www.python.org/). <br>
- 
- 
- 
- <br>
- 
- 
+<br>
+MacOS: You need to install python 3.8 from the [python website](https://www.python.org/). 
+<br>
 
 Then clone this repository to any folder you want:
 ```
@@ -73,6 +63,7 @@ pip install windows-curses
 
 Then clone this repository to any folder you want:
 ```
+
 git clone https://github.com/Builditluc/PyHex.git
 ```
 
