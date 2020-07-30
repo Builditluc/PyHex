@@ -2,7 +2,8 @@
 
 [![GitHub version](https://badge.fury.io/gh/builditluc%2Fpyhex.svg)](https://badge.fury.io/gh/builditluc%2Fpyhex)
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
-[![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.png?v=103)](https://github.com/ellerbrock/open-source-badges/)
+[![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.png?v=103)](https://github.com/ellerbrock/open-source-badges/)<br>
+[![HitCount](http://hits.dwyl.com/builditluc/pyhex.svg)](http://hits.dwyl.com/builditluc/pyhex)
 
 ## Preview
 Displays the Offset and the content of the currently opened file. (Decoded text will be added soon)
