@@ -1,6 +1,11 @@
+
 # PyHex
 
 `PyHex` is a simple python hex viewer for the terminal
+
+[![GitHub version](https://badge.fury.io/gh/builditluc%2Fpyhex.svg)](https://badge.fury.io/gh/builditluc%2Fpyhex)
+[![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
+[![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.png?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
 ## Preview
 Displays the Offset and the content of the currently opened file. (Decoded text will be added soon)
@@ -77,4 +82,4 @@ py pyhex.py <file_name>
 
 Note:  if `py` don't work try to use `python` instead
     
-    And for any problems regarding windows, you should have a look at [this](https://wiki.archlinux.org/index.php/Installation_guide)https://wiki.archlinux.org/index.php/Installation_guidehttps://wiki.archlinux.org/index.php/Installation_guide
+And for any problems regarding windows, you should have a look at [this](https://wiki.archlinux.org/index.php/Installation_guide)
