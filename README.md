@@ -1,3 +1,6 @@
+
+# PyHex
+
 `PyHex` is a simple python hex viewer for the terminal
 
 [![GitHub version](https://badge.fury.io/gh/builditluc%2Fpyhex.svg)](https://badge.fury.io/gh/builditluc%2Fpyhex)
