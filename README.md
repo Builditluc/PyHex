@@ -69,13 +69,13 @@ Download the [newest version](https://github.com/Builditluc/PyHex/releases) of `
 
 Now you can view any file in `PyHex`:
 ```
-py pyhex.py <file_name>
+pyhex.py <file_name>
 ```
-Note:  if `py` don't work try to use `python` instead
 
 If you want to be able to use the file, also when not in the downloaded directory, move the directory to your documents folder (or any other folder).
 Then you can add `PyHex` to the path with this simple command
 ```
 set PATH=%PATH%;C:\path\to\the\pyhex\directory
 ```
+Note: After you added this directory to the path, don't move it or otherwise it won't work
 
