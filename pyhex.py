@@ -49,7 +49,10 @@ class HexFile:
                 byte_object = bytes.fromhex(hex_object)
 
                 # Convert the byte into ascii
-                ascii_object = byte_object.decode("ascii")
+                try:
+                    ascii_object = byte_object.decode("ascii")
+                except UnicodeDecodeError:
+                    ascii_object = "."
 
                 # Replace the char with a dot if it's a special character
                 special_characters = ["\a", "\b", "\f", "\n", "\r", "\t", "\v"]
