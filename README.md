@@ -9,10 +9,10 @@
 
 ## Preview
 Displays the Offset and the content of the currently opened file. (Decoded text will be added soon)
-![](https://i.imgur.com/PdXMugu.png)
+![](https://i.imgur.com/A4pezQn.png)
 
 Supports scrolling with the arrow keys
-![](https://i.imgur.com/B50L79O.png)
+![](https://i.imgur.com/k7PZY3l.png)
 
 ## Installation
 
@@ -80,5 +80,3 @@ py pyhex.py <file_name>
 ```
 
 Note:  if `py` don't work try to use `python` instead
-    
-And for any problems regarding windows, you should have a look at [this](https://wiki.archlinux.org/index.php/Installation_guide)

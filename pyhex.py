@@ -30,14 +30,41 @@ class HexFile:
         This function begins the process of reading a file
         and converting it to hex
         """
-        self.read_file()
+        self._read_file()
         self._process_content()
         self._format_content()
 
-    def read_file(self):
+    def decode_hex(self):
         """
-        Read the file in binary mode
+        This function decodes the hex content of the file to ascii
+
+        :return: The decoded text, already formatted
         """
+        decoded_array = []
+
+        for line in self.hex_array:
+            line_array = []
+            for hex_object in line:
+                # Convert the hex byte into a normal byte
+                byte_object = bytes.fromhex(hex_object)
+
+                # Convert the byte into ascii
+                ascii_object = byte_object.decode("ascii")
+
+                # Replace the char with a dot if it's a special character
+                special_characters = ["\a", "\b", "\f", "\n", "\r", "\t", "\v"]
+                if ascii_object in special_characters:
+                    ascii_object = "."
+
+                # Add the ascii char to the line array
+                line_array.append(ascii_object)
+
+            # add the line to the decoded array
+            decoded_array.append(line_array)
+
+        return decoded_array
+
+    def _read_file(self):
         self.file_content = open(self.filename, "rb").readlines()
 
     def _process_content(self):
@@ -97,7 +124,7 @@ class PyHex(Window):
         self.down_scroll = 1
 
         # Creating the variables for the title
-        self.title = "PyHex - A Python Hex Editor"
+        self.title = "PyHex - A Python Hex Viewer"
 
         self.title_x = int
         self.title_y = 0
@@ -128,6 +155,10 @@ class PyHex(Window):
         self.file = HexFile(self.filename, self.encoded_title_len)
         self.file.start()
 
+        # Decode the File into ascii
+        self.decoded_text = self.file.decode_hex()
+
+        # Calculate the bottom line
         self.bottom_line = len(self.file.hex_array)
 
     def init_colors(self):
@@ -212,6 +243,20 @@ class PyHex(Window):
 
         for offset in offsets:
             self.draw_text(y_coord, x_coord, offset, 1)
+            y_coord += 1
+
+        # Draw the decoded text
+        y_coord = self.decoded_title_y + 1
+        x_coord = self.decoded_title_x
+        x_offset = 0
+
+        lines = self.decoded_text[self.top_line:self.top_line + self.max_lines]
+
+        for line in lines:
+            for char in line:
+                self.draw_text(y_coord, x_coord + x_offset, char, 1)
+                x_offset += 1
+            x_offset = 0
             y_coord += 1
 
         # DEBUG
