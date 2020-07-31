@@ -47,7 +47,7 @@ MacOS: You need to install python 3.8 from the [python website](https://www.pyth
 
 <br>
 
-Then, download the newest version of `PyHex` and unzip the source code
+Then, download the [newest version](https://github.com/Builditluc/PyHex/releases) of `PyHex` and unzip the program
 
 Now you can view any file in `PyHex`:
 ```
@@ -65,7 +65,7 @@ After that install `windows-curses`:
 pip install windows-curses
 ```
 
-Download the newest version of `PyHex` and unzip the source code
+Download the [newest version](https://github.com/Builditluc/PyHex/releases) of `PyHex` and unzip the program
 
 Now you can view any file in `PyHex`:
 ```
