@@ -119,7 +119,7 @@ class PyHex(Window):
         self.set_cursor_state(0)
         self.columns = 16
 
-        self.max_lines = curses.LINES - 3  # Max number of lines on the screen
+        self.max_lines = curses.LINES - 4  # Max number of lines on the screen
         self.top_line = 0  # The line at the top of the screen
         self.bottom_line = 0  # The line at the bottom of the screen
 
@@ -152,10 +152,10 @@ class PyHex(Window):
 
         # Creating the variables for the Encoded text
         self.encoded_title = ""
-        self.encoded_title_x = 14
+        self.encoded_title_x = 13
         self.encoded_title_y = 1
 
-        self.encoded_text_x = 14
+        self.encoded_text_x = 13
         self.encoded_text_y = 2
 
         # Creating the variables for the Decoded text
@@ -212,7 +212,7 @@ class PyHex(Window):
             self.encoded_title += hex_ch + " "
 
         # Calculating the coordinates of the Decoded title
-        self.decoded_title_x = self.encoded_title_x + len(self.encoded_title) + 3
+        self.decoded_title_x = self.encoded_title_x + len(self.encoded_title) + 2
         self.decoded_text_x = self.decoded_title_x
 
         # Calculating the offset
@@ -224,6 +224,27 @@ class PyHex(Window):
             self.offset_text.append(offset)
 
     def late_update(self):
+        # Drawing a box around the text
+
+        # Draw the Horizontal lines
+        self.draw_text(self.offset_text_y, self.offset_text_x - 1,
+                       "\u250C" + "\u2500"*(self.offset_len + (self.columns * 4 + 5)) +
+                       "\u2510", 1)
+        self.draw_text(self.offset_text_y, self.encoded_text_x - 2, "\u252C", 1)
+        self.draw_text(self.offset_text_y, self.decoded_text_x - 2, "\u252C", 1)
+
+        self.draw_text(curses.LINES - 1, self.offset_text_x - 1,
+                       "\u2514" + "\u2500" * (self.offset_len + (self.columns * 4 + 5)) +
+                       "\u2518", 1)
+        self.draw_text(curses.LINES - 1, self.encoded_text_x - 2, "\u2534", 1)
+        self.draw_text(curses.LINES - 1, self.decoded_text_x - 2, "\u2534", 1)
+
+        # Draw the Vertical lines
+        for i in range(self.offset_text_y + 1, curses.LINES - 1):
+            self.draw_text(i, self.offset_text_x - 1, "\u2502" + " "*(self.offset_len + 1) +
+                           "\u2502" + " "*(self.columns * 3 + 1) + "\u2502" +
+                           " "*(self.columns + 1) + "\u2502", 1)
+
         # Drawing the title
         self.draw_text(self.title_y, self.title_x,
                        self.title, 2)
