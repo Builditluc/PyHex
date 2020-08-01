@@ -8,11 +8,11 @@
 [![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.png?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
 ## Preview
-Displays the Offset and the content of the currently opened file. (Decoded text will be added soon)
-![](https://i.imgur.com/A4pezQn.png)
+Displays the Offset and the content of the currently opened file. The Decoded text is displayed on the right
+![](https://i.imgur.com/IQ8ossY.png)
 
 Supports scrolling with the arrow keys
-![](https://i.imgur.com/k7PZY3l.png)
+![](https://i.imgur.com/HvKgfWC.png)
 
 ## Installation
 
@@ -47,17 +47,14 @@ MacOS: You need to install python 3.8 from the [python website](https://www.pyth
 
 <br>
 
-Then clone this repository to any folder you want:
-```
-git clone https://github.com/Builditluc/PyHex.git
-```
+Then, download the [newest version](https://github.com/Builditluc/PyHex/releases) of `PyHex` and unzip the program
 
 Now you can view any file in `PyHex`:
 ```
 ./pyhex.py <file_name>
 ```
 
-If you want to be able to use the file, also when not in the cloned directory, you can add it to a directory that is in the path, such as `/usr/bin`.
+If you want to be able to use the file, also when not in the downloaded directory, you can add it to a directory that is in the path, such as `/usr/bin`.
 
 
 ### On Windows 10
@@ -68,15 +65,17 @@ After that install `windows-curses`:
 pip install windows-curses
 ```
 
-You need to install [git](https://git-scm.com/download/win), if you haven't installed it yet <br>
-Then clone this repository to any folder you want:
-```
-git clone https://github.com/Builditluc/PyHex.git
-```
+Download the [newest version](https://github.com/Builditluc/PyHex/releases) of `PyHex` and unzip the program
 
 Now you can view any file in `PyHex`:
 ```
-py pyhex.py <file_name>
+pyhex.py <file_name>
 ```
 
-Note:  if `py` don't work try to use `python` instead
+If you want to be able to use the file, also when not in the downloaded directory, move the directory to your documents folder (or any other folder).
+Then you can add `PyHex` to the path with this simple command
+```
+set PATH=%PATH%;C:\path\to\the\pyhex\directory
+```
+Note: After you added this directory to the path, don't move it or otherwise it won't work
+
