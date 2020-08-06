@@ -125,7 +125,6 @@ class PyHex(Window):
 
         self.cursor_y = 0  # The y coord of the cursor
         self.cursor_x = 0  # The x coord of the cursor
-        self.cursor_byte = 0  # The position of the cursor in a single byte (0 or 1)
 
         self.up_scroll = -1
         self.down_scroll = 1
@@ -271,12 +270,7 @@ class PyHex(Window):
         for _y, line in enumerate(lines):
             for _x, byte in enumerate(line):
                 if _y == self.cursor_y and _x == self.cursor_x:
-                    if self.cursor_byte == 0:
-                        self.draw_text(y_coord, x_coord + x_offset, byte[:1], 3)
-                        self.draw_text(y_coord, x_coord + x_offset + 1, byte[1:], 1)
-                    else:
-                        self.draw_text(y_coord, x_coord + x_offset, byte[:1], 1)
-                        self.draw_text(y_coord, x_coord + x_offset + 1, byte[1:], 3)
+                    self.draw_text(y_coord, x_coord + x_offset, byte, 3)
                 else:
                     self.draw_text(y_coord, x_coord + x_offset, byte, 1)
                 x_offset += 3
@@ -323,27 +317,30 @@ class PyHex(Window):
         next_position = self.cursor_x + direction
 
         # Scroll left
-        # current cursor position or left position is greater than 0
-        if (direction == self.left_scroll) and (self.cursor_x >= 0):
-            if self.cursor_byte == 1:
-                self.cursor_byte = 0
-            else:
-                if next_position < 0:
-                    return
-                self.cursor_x = next_position
-                self.cursor_byte = 1
+        # current cursor position or left position is greater or equal than 0
+        if (direction == self.left_scroll) and (self.cursor_x >= 0) and (next_position >= 0):
+            self.cursor_x = next_position
             return
 
         # Scroll right
         # absolute position of next cursor is not the right edge
-        if (direction == self.right_scroll) and (next_position < self.columns + 1):
-            if self.cursor_byte == 0:
-                self.cursor_byte = 1
-            else:
-                if next_position >= self.columns:
-                    return
-                self.cursor_x = next_position
-                self.cursor_byte = 0
+        if (direction == self.right_scroll) and (next_position < self.columns):
+            self.cursor_x = next_position
+            return
+
+        # Left overflow
+        # next cursor position is smaller than 0 and the current line is not the top
+        if (direction == self.left_scroll) and (next_position < 0) \
+                and (self.cursor_y > 0 and self.top_line >= 0):
+            self.cursor_x = self.columns - 1
+            self.scroll_vertically(self.up_scroll)
+            return
+
+        # Right overflow
+        # next cursor position is over the right edge
+        if (direction == self.right_scroll) and (next_position == self.columns):
+            self.cursor_x = 0
+            self.scroll_vertically(self.down_scroll)
             return
 
     def scroll_vertically(self, direction):
