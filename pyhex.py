@@ -126,6 +126,9 @@ class PyHex(Window):
         self.cursor_y = 0  # The y coord of the cursor
         self.cursor_x = 0  # The x coord of the cursor
 
+        self.content_pos_y = 0  # The y coord of the cursor in the Hex Array
+        self.content_pos_x = 0  # The x coord of the cursor in the Hex Array
+
         self.up_scroll = -1
         self.down_scroll = 1
 
@@ -294,9 +297,12 @@ class PyHex(Window):
 
         lines = self.decoded_text[self.top_line:self.top_line + self.max_lines]
 
-        for line in lines:
-            for char in line:
-                self.draw_text(y_coord, x_coord + x_offset, char, 1)
+        for _y, line in enumerate(lines):
+            for _x, char in enumerate(line):
+                if _y == self.cursor_y and _x == self.cursor_x:
+                    self.draw_text(y_coord, x_coord + x_offset, char, 3)
+                else:
+                    self.draw_text(y_coord, x_coord + x_offset, char, 1)
                 x_offset += 1
             x_offset = 0
             y_coord += 1
@@ -320,19 +326,21 @@ class PyHex(Window):
         # current cursor position or left position is greater or equal than 0
         if (direction == self.left_scroll) and (self.cursor_x >= 0) and (next_position >= 0):
             self.cursor_x = next_position
+            self.content_pos_x += direction
             return
 
         # Scroll right
         # absolute position of next cursor is not the right edge
         if (direction == self.right_scroll) and (next_position < self.columns):
             self.cursor_x = next_position
+            self.content_pos_x += direction
             return
 
         # Left overflow
         # next cursor position is smaller than 0 and the current line is not the top
-        if (direction == self.left_scroll) and (next_position < 0) \
-                and (self.cursor_y > 0 and self.top_line >= 0):
+        if (direction == self.left_scroll) and (next_position < 0 < self.content_pos_y):
             self.cursor_x = self.columns - 1
+            self.content_pos_x = self.columns - 1
             self.scroll_vertically(self.up_scroll)
             return
 
@@ -340,6 +348,7 @@ class PyHex(Window):
         # next cursor position is over the right edge
         if (direction == self.right_scroll) and (next_position == self.columns):
             self.cursor_x = 0
+            self.content_pos_x = 0
             self.scroll_vertically(self.down_scroll)
             return
 
@@ -355,6 +364,7 @@ class PyHex(Window):
         # current cursor position is 0, but top position is greater than 0
         if (direction == self.up_scroll) and (self.top_line > 0 and self.cursor_y == 0):
             self.top_line += direction
+            self.content_pos_y += direction
             return
 
         # Down direction scroll overflow
@@ -363,12 +373,14 @@ class PyHex(Window):
         if (direction == self.down_scroll) and (next_line == self.max_lines) \
                 and (self.top_line + self.max_lines < self.bottom_line):
             self.top_line += direction
+            self.content_pos_y += direction
             return
 
         # Scroll up
         # current cursor position or top position is greater than 0
         if (direction == self.up_scroll) and (self.top_line > 0 or self.cursor_y > 0):
             self.cursor_y = next_line
+            self.content_pos_y += direction
             return
 
         # Scroll down
@@ -377,6 +389,7 @@ class PyHex(Window):
         if (direction == self.down_scroll) and (next_line < self.max_lines) \
                 and (self.top_line + next_line < self.bottom_line):
             self.cursor_y = next_line
+            self.content_pos_y += direction
             return
 
 
