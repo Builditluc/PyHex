@@ -6,6 +6,7 @@ PyHex is a simple python Hex viewer
 import curses
 import curses.ascii
 import sys
+import os
 from base import Application, Window
 
 
@@ -111,6 +112,7 @@ class PyHex(Window):
     """
 
     # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-many-statements
     # pylint: disable=no-member
     def __init__(self, *args, **kwargs):
         super(__class__, self).__init__(*args, **kwargs)
@@ -119,10 +121,10 @@ class PyHex(Window):
         # Hiding the Cursor
         self.set_cursor_state(0)
         self.columns = 16
+        self.last_line = curses.LINES - 2
 
-        self.max_lines = curses.LINES - 4  # Max number of lines on the screen
-        self.top_line = 0  # The line at the top of the screen
-        self.bottom_line = 0  # The line at the bottom of the screen
+        self.max_lines = self.last_line - 3  # Max number of lines on the screen
+        self.top_line = self.bottom_line = 0  # The lines at the top and the bottom of the screen
         self.edit_lines = self.encoded_lines = self.decoded_lines = self.offset_lines = []
 
         self.cursor_y = self.cursor_x = 0  # The coords of the cursor
@@ -178,11 +180,18 @@ class PyHex(Window):
         self.decoded_text_x = int
         self.decoded_text_y = 2
 
+
         # The File
         self.filename = sys.argv[1]
         # self.filename = "base.py"
         self.file = HexFile(self.filename, self.columns)
         self.file.start()
+
+        # Creating the variables for the Status bar
+        self._status_bar_text = "{}".format(os.path.basename(self.filename))
+        self.status_bar_text = ""
+        self.status_bar_color = 3
+        self.get_status_bar_text = lambda: self._status_bar_text + self.status_bar_text
 
         # Creating the array for the edited bytes
         self.edited_array = []
@@ -260,6 +269,7 @@ class PyHex(Window):
         self._draw_offset()
         self._draw_encoded()
         self._draw_decoded()
+        self._draw_status_bar()
 
     def _draw_box(self):
         # Draw the Horizontal lines
@@ -269,19 +279,20 @@ class PyHex(Window):
         self.draw_text(self.offset_text_y, self.encoded_text_x - 2, "\u252C", 1)
         self.draw_text(self.offset_text_y, self.decoded_text_x - 2, "\u252C", 1)
 
-        self.draw_text(curses.LINES - 1, self.offset_text_x - 1,
+        self.draw_text(self.last_line, self.offset_text_x - 1,
                        "\u2514" + "\u2500" * (self.offset_len + (self.columns * 4 + 5)) +
                        "\u2518", 1)
-        self.draw_text(curses.LINES - 1, self.encoded_text_x - 2, "\u2534", 1)
-        self.draw_text(curses.LINES - 1, self.decoded_text_x - 2, "\u2534", 1)
+        self.draw_text(self.last_line, self.decoded_text_x - 2, "\u2534", 1)
+        self.draw_text(self.last_line, self.encoded_text_x - 2, "\u2534", 1)
 
         # Draw the Vertical lines
-        for i in range(self.offset_text_y + 1, curses.LINES - 1):
+        for i in range(self.offset_text_y + 1, self.last_line):
             self.draw_text(i, self.offset_text_x - 1, "\u2502" + " " * (self.offset_len + 1) +
                            "\u2502" + " " * (self.columns * 3 + 1) + "\u2502" +
                            " " * (self.columns + 1) + "\u2502", 1)
 
     def _draw_titles(self):
+
         # Drawing the title
         self.draw_text(self.title_y, self.title_x,
                        self.title, 2)
@@ -379,6 +390,10 @@ class PyHex(Window):
                     self.draw_text(y_coord, x_coord + x_offset, ascii_object, edited_color)
                 x_offset += 1
             y_coord += 1
+
+    def _draw_status_bar(self):
+        self.draw_text(self.last_line + 1, 0, " "*(self.width-1), self.status_bar_color)
+        self.draw_text(self.last_line + 1, 0, self.get_status_bar_text(), self.status_bar_color)
 
     def scroll_horizontally(self, direction):
         """
