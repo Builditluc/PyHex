@@ -22,6 +22,8 @@ class HexFile:
         self.filename = filename
         self.file_content = bytes
 
+        self.special_characters = ["\a", "\b", "\f", "\n", "\r", "\t", "\v", "\x00"]
+
         self.hex_array = []
         self.hex_array_len = 0
 
@@ -55,8 +57,7 @@ class HexFile:
                     ascii_object = "."
 
                 # Replace the char with a dot if it's a special character
-                special_characters = ["\a", "\b", "\f", "\n", "\r", "\t", "\v"]
-                if ascii_object in special_characters:
+                if ascii_object in self.special_characters:
                     ascii_object = "."
 
                 # Add the ascii char to the line array
@@ -123,8 +124,11 @@ class PyHex(Window):
         self.top_line = 0  # The line at the top of the screen
         self.bottom_line = 0  # The line at the bottom of the screen
 
-        self.cursor_y = 0  # The y coord of the cursor
-        self.cursor_x = 0  # The x coord of the cursor
+        self.edit_lines = []
+        self.encoded_lines = []
+        self.decoded_lines = []
+
+        [self.cursor_y, self.cursor_x] = 0, 0  # The coords of the cursor
 
         self.content_pos_y = 0  # The y coord of the cursor in the Hex Array
         self.content_pos_x = 0  # The x coord of the cursor in the Hex Array
@@ -134,6 +138,16 @@ class PyHex(Window):
 
         self.left_scroll = -1
         self.right_scroll = 1
+
+        # All the keys that can be written to a byte
+        self.edit_keys = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                          "a", "b", "c", "d", "e", "f"]
+
+        for _i, key in enumerate(self.edit_keys):
+            self.edit_keys[_i] = ord(str(key))
+
+        # The position of the cursor in a byte (0 or 1)
+        self.edited_position = 0
 
         # Creating the variables for the title
         self.title = "PyHex - A Python Hex Viewer"
@@ -175,6 +189,12 @@ class PyHex(Window):
         self.file = HexFile(self.filename, self.columns)
         self.file.start()
 
+        # Creating the array for the edited bytes
+        self.edited_array = []
+        for line in self.file.hex_array:
+            edited_line = ["--"] * len(line)
+            self.edited_array.append(edited_line)
+
         # Decode the File into ascii
         self.decoded_text = self.file.decode_hex()
 
@@ -186,6 +206,8 @@ class PyHex(Window):
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)  # Plaintext color
         curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)  # Title color
         curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)  # Selected color
+        curses.init_pair(4, curses.COLOR_RED, curses.COLOR_BLACK)  # Edited color
+        curses.init_pair(5, curses.COLOR_RED, curses.COLOR_WHITE)  # Selected-Edited color
 
     def check_keys(self):
         if self.key_pressed == curses.ascii.ESC or self.key_pressed == ord("q"):
@@ -200,6 +222,13 @@ class PyHex(Window):
             self.scroll_horizontally(self.left_scroll)
         elif self.key_pressed == curses.KEY_RIGHT:
             self.scroll_horizontally(self.right_scroll)
+
+        if self.key_pressed in self.edit_keys:
+            char = chr(self.key_pressed)
+            self.edit(char, self.content_pos_y, self.content_pos_x)
+
+        if self.key_pressed == curses.ascii.BS:
+            self.clear_edit(self.content_pos_y, self.content_pos_x)
 
     def update(self):
         # Calculating the coordinates of the title
@@ -225,12 +254,21 @@ class PyHex(Window):
             offset = "0" * (self.offset_len - len(str(offset))) + str(offset)
             self.offset_text.append(offset)
 
-    def late_update(self):
-        # Drawing a box around the text
+        self.encoded_lines = self.file.hex_array[self.top_line:self.top_line + self.max_lines]
+        self.decoded_lines = self.decoded_text[self.top_line:self.top_line + self.max_lines]
+        self.edit_lines = self.edited_array[self.top_line:self.top_line + self.max_lines]
 
+    def late_update(self):
+        self._draw_box()
+        self._draw_titles()
+        self._draw_offset()
+        self._draw_encoded()
+        self._draw_decoded()
+
+    def _draw_box(self):
         # Draw the Horizontal lines
         self.draw_text(self.offset_text_y, self.offset_text_x - 1,
-                       "\u250C" + "\u2500"*(self.offset_len + (self.columns * 4 + 5)) +
+                       "\u250C" + "\u2500" * (self.offset_len + (self.columns * 4 + 5)) +
                        "\u2510", 1)
         self.draw_text(self.offset_text_y, self.encoded_text_x - 2, "\u252C", 1)
         self.draw_text(self.offset_text_y, self.decoded_text_x - 2, "\u252C", 1)
@@ -243,10 +281,11 @@ class PyHex(Window):
 
         # Draw the Vertical lines
         for i in range(self.offset_text_y + 1, curses.LINES - 1):
-            self.draw_text(i, self.offset_text_x - 1, "\u2502" + " "*(self.offset_len + 1) +
-                           "\u2502" + " "*(self.columns * 3 + 1) + "\u2502" +
-                           " "*(self.columns + 1) + "\u2502", 1)
+            self.draw_text(i, self.offset_text_x - 1, "\u2502" + " " * (self.offset_len + 1) +
+                           "\u2502" + " " * (self.columns * 3 + 1) + "\u2502" +
+                           " " * (self.columns + 1) + "\u2502", 1)
 
+    def _draw_titles(self):
         # Drawing the title
         self.draw_text(self.title_y, self.title_x,
                        self.title, 2)
@@ -263,24 +302,7 @@ class PyHex(Window):
         self.draw_text(self.decoded_title_y, self.decoded_title_x,
                        self.decoded_title, 1)
 
-        # Drawing the Content of the File
-        y_coord = self.encoded_text_y + 1
-        x_coord = self.encoded_text_x
-        x_offset = 0
-
-        lines = self.file.hex_array[self.top_line:self.top_line + self.max_lines]
-
-        for _y, line in enumerate(lines):
-            for _x, byte in enumerate(line):
-                if _y == self.cursor_y and _x == self.cursor_x:
-                    self.draw_text(y_coord, x_coord + x_offset, byte, 3)
-                else:
-                    self.draw_text(y_coord, x_coord + x_offset, byte, 1)
-                x_offset += 3
-            x_offset = 0
-            y_coord += 1
-
-        # Drawing the Offset
+    def _draw_offset(self):
         y_coord = self.offset_text_y + 1
         x_coord = self.offset_text_x
 
@@ -290,29 +312,81 @@ class PyHex(Window):
             self.draw_text(y_coord, x_coord, offset, 1)
             y_coord += 1
 
-        # Draw the decoded text
-        y_coord = self.decoded_text_y + 1
-        x_coord = self.decoded_text_x
+    def _draw_encoded(self):
+        y_coord = self.encoded_text_y + 1
+        x_coord = self.encoded_text_x
         x_offset = 0
 
-        lines = self.decoded_text[self.top_line:self.top_line + self.max_lines]
+        lines = self.file.hex_array[self.top_line:self.top_line + self.max_lines]
+        edit_lines = self.edited_array[self.top_line:self.top_line + self.max_lines]
 
         for _y, line in enumerate(lines):
-            for _x, char in enumerate(line):
+            for _x, byte in enumerate(line):
+                edited_color = 4
+                normal_color = 1
+
                 if _y == self.cursor_y and _x == self.cursor_x:
-                    self.draw_text(y_coord, x_coord + x_offset, char, 3)
-                else:
-                    self.draw_text(y_coord, x_coord + x_offset, char, 1)
-                x_offset += 1
+                    edited_color = 5
+                    normal_color = 3
+
+                if (edit_lines[_y][_x][:1] != "-") and (edit_lines[_y][_x][1:] != "-"):
+                    self.draw_text(y_coord, x_coord + x_offset, edit_lines[_y][_x], edited_color)
+                elif edit_lines[_y][_x][1:] != "-":
+                    self.draw_text(y_coord, x_coord + x_offset,
+                                   edit_lines[_y][_x][1:] + byte[:1], edited_color)
+                elif edit_lines[_y][_x][:1] != "-":
+                    self.draw_text(y_coord, x_coord + x_offset,
+                                   edit_lines[_y][_x][:1] + byte[1:], edited_color)
+                elif edit_lines[_y][_x] == "--":
+                    self.draw_text(y_coord, x_coord + x_offset, byte, normal_color)
+                x_offset += 3
             x_offset = 0
             y_coord += 1
 
-        # DEBUG
-        # self.draw_text(2, self.title_x, "DEBUG:", 2)
-        # self.draw_text(3, self.title_x + 4, "self.top_line : " + str(self.top_line), 1)
-        # self.draw_text(4, self.title_x + 4, "self.bottom_line : " + str(self.bottom_line), 1)
-        # self.draw_text(5, self.title_x + 4, "self.max_lines : " + str(self.max_lines), 1)
-        # self.draw_text(6, self.title_x + 4, "self.current : " + str(self.current), 1)
+    def _draw_decoded(self):
+        y_coord = self.decoded_text_y + 1
+        x_coord = self.decoded_text_x
+
+        for _y, line in enumerate(self.decoded_lines):
+            x_offset = 0
+            for _x, char in enumerate(line):
+                edited_color = 4
+                normal_color = 1
+                edited = False
+
+                if _y == self.cursor_y and _x == self.cursor_x:
+                    edited_color = 5
+                    normal_color = 3
+
+                if self.edit_lines[_y][_x] == "--":
+                    self.draw_text(y_coord, x_coord + x_offset, char, normal_color)
+                elif self.edit_lines[_y][_x][:1] == "-":
+                    hex_object = self.encoded_lines[_y][_x][:1] + self.edit_lines[_y][_x][1:]
+                    edited = True
+                elif self.edit_lines[_y][_x][1:] == "-":
+                    hex_object = self.edit_lines[_y][_x][:1] + self.encoded_lines[_y][_x][:1]
+                    edited = True
+                else:
+                    hex_object = self.edit_lines[_y][_x]
+                    edited = True
+
+                if edited:
+                    # Convert the hex byte into a normal byte
+                    byte_object = bytes.fromhex(hex_object)
+
+                    # Convert the byte into ascii
+                    try:
+                        ascii_object = byte_object.decode("ascii")
+                    except UnicodeDecodeError:
+                        ascii_object = "."
+
+                    # Replace the char with a dot if it's a special character
+                    if ascii_object in self.file.special_characters:
+                        ascii_object = "."
+
+                    self.draw_text(y_coord, x_coord + x_offset, ascii_object, edited_color)
+                x_offset += 1
+            y_coord += 1
 
     def scroll_horizontally(self, direction):
         """
@@ -321,6 +395,10 @@ class PyHex(Window):
         """
         # next cursor position after scrolling
         next_position = self.cursor_x + direction
+
+        # When scroll left or right, reset the edited position
+        if direction in (self.left_scroll, self.right_scroll):
+            self.edited_position = 0
 
         # Scroll left
         # current cursor position or left position is greater or equal than 0
@@ -391,6 +469,48 @@ class PyHex(Window):
             self.cursor_y = next_line
             self.content_pos_y += direction
             return
+
+    def edit(self, char, cursor_y, cursor_x):
+        """
+        Changes one character of a byte
+        :param cursor_y: The y coordinate of the cursor in the array
+        :param cursor_x: The x coordinate of the cursor in the array
+        """
+        # If the character is a letter, make it upper
+        if char.isalpha():
+            char = char.upper()
+
+        # Add the byte to the edited array
+        for _y, line in enumerate(self.edited_array):
+            for _x in range(0, len(line)):
+                if _y == cursor_y and _x == cursor_x:
+                    if self.edited_position == 0:
+                        self.edited_array[_y][_x] = str(char) + self.edited_array[_y][_x][1:]
+                        self.edited_position = 1
+                        return
+
+                    if self.edited_position == 1:
+                        self.edited_array[_y][_x] = self.edited_array[_y][_x][:1] + str(char)
+                        self.edited_position = 0
+                        self.scroll_horizontally(self.right_scroll)
+                        return
+
+    def clear_edit(self, cursor_y, cursor_x):
+        """
+        Removes the edit of a byte
+        :param cursor_y: The y coordinate of the cursor in the array
+        :param cursor_x: The x coordinate of the cursor in the array
+        """
+        # Clear the byte in the edited array
+        for _y, line in enumerate(self.edited_array):
+            for _x in range(0, len(line)):
+                if _y == cursor_y and _x == cursor_x:
+                    self.edited_array[_y][_x] = "--"
+
+                    # When the byte was cleared, move the cursor to the left
+                    self.scroll_horizontally(self.left_scroll)
+                    self.edited_position = 0
+                    return
 
 
 if __name__ == '__main__':
