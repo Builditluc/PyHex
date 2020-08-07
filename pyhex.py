@@ -252,6 +252,7 @@ class PyHex(Window):
         self.encoded_lines = self.file.hex_array[self.top_line:self.top_line + self.max_lines]
         self.decoded_lines = self.decoded_text[self.top_line:self.top_line + self.max_lines]
         self.edit_lines = self.edited_array[self.top_line:self.top_line + self.max_lines]
+        self.offset_lines = self.offset_text[self.top_line:self.top_line + self.max_lines]
 
     def late_update(self):
         self._draw_box()
