@@ -123,15 +123,10 @@ class PyHex(Window):
         self.max_lines = curses.LINES - 4  # Max number of lines on the screen
         self.top_line = 0  # The line at the top of the screen
         self.bottom_line = 0  # The line at the bottom of the screen
+        self.edit_lines = self.encoded_lines = self.decoded_lines = self.offset_lines = []
 
-        self.edit_lines = []
-        self.encoded_lines = []
-        self.decoded_lines = []
-
-        [self.cursor_y, self.cursor_x] = 0, 0  # The coords of the cursor
-
-        self.content_pos_y = 0  # The y coord of the cursor in the Hex Array
-        self.content_pos_x = 0  # The x coord of the cursor in the Hex Array
+        self.cursor_y = self.cursor_x = 0  # The coords of the cursor
+        self.content_pos_y = self.content_pos_x = 0  # The coords of the cursor in the Hex Array
 
         self.up_scroll = -1
         self.down_scroll = 1
@@ -306,9 +301,7 @@ class PyHex(Window):
         y_coord = self.offset_text_y + 1
         x_coord = self.offset_text_x
 
-        offsets = self.offset_text[self.top_line:self.max_lines + self.top_line]
-
-        for offset in offsets:
+        for offset in self.offset_lines:
             self.draw_text(y_coord, x_coord, offset, 1)
             y_coord += 1
 
@@ -317,10 +310,7 @@ class PyHex(Window):
         x_coord = self.encoded_text_x
         x_offset = 0
 
-        lines = self.file.hex_array[self.top_line:self.top_line + self.max_lines]
-        edit_lines = self.edited_array[self.top_line:self.top_line + self.max_lines]
-
-        for _y, line in enumerate(lines):
+        for _y, line in enumerate(self.encoded_lines):
             for _x, byte in enumerate(line):
                 edited_color = 4
                 normal_color = 1
@@ -329,15 +319,16 @@ class PyHex(Window):
                     edited_color = 5
                     normal_color = 3
 
-                if (edit_lines[_y][_x][:1] != "-") and (edit_lines[_y][_x][1:] != "-"):
-                    self.draw_text(y_coord, x_coord + x_offset, edit_lines[_y][_x], edited_color)
-                elif edit_lines[_y][_x][1:] != "-":
+                if (self.edit_lines[_y][_x][:1] != "-") and (self.edit_lines[_y][_x][1:] != "-"):
                     self.draw_text(y_coord, x_coord + x_offset,
-                                   edit_lines[_y][_x][1:] + byte[:1], edited_color)
-                elif edit_lines[_y][_x][:1] != "-":
+                                   self.edit_lines[_y][_x], edited_color)
+                elif self.edit_lines[_y][_x][1:] != "-":
                     self.draw_text(y_coord, x_coord + x_offset,
-                                   edit_lines[_y][_x][:1] + byte[1:], edited_color)
-                elif edit_lines[_y][_x] == "--":
+                                   self.edit_lines[_y][_x][1:] + byte[:1], edited_color)
+                elif self.edit_lines[_y][_x][:1] != "-":
+                    self.draw_text(y_coord, x_coord + x_offset,
+                                   self.edit_lines[_y][_x][:1] + byte[1:], edited_color)
+                elif self.edit_lines[_y][_x] == "--":
                     self.draw_text(y_coord, x_coord + x_offset, byte, normal_color)
                 x_offset += 3
             x_offset = 0
