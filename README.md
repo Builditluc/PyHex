@@ -72,6 +72,7 @@ If you want to be able to use the file, also when not in the downloaded director
 ### On Windows 10
 
 You need to install python 3.8 from the [python website](https://www.python.org/) <br>
+Make sure to add python to the PATH (Little checkbox in the python installer) <br>
 After that install `windows-curses`:
 ```
 pip install windows-curses
