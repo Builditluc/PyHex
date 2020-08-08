@@ -1,18 +1,30 @@
 
 # PyHex
 
-`PyHex` is a simple python hex viewer for the terminal
+`PyHex` is a simple python hex editor for the terminal
 
 [![GitHub version](https://badge.fury.io/gh/builditluc%2Fpyhex.svg)](https://badge.fury.io/gh/builditluc%2Fpyhex)
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 [![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.png?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
 ## Preview
-Displays the Offset and the content of the currently opened file. The Decoded text is displayed on the right
-![](https://i.imgur.com/ZU5BkDH.png)
+![](https://i.imgur.com/Wia7wtg.png)
+Displays the Offset and the content of the currently opened file. The Decoded text is displayed on the right <br><br>
 
-Supports scrolling with the arrow keys
-![](https://i.imgur.com/t6CWTLY.png)
+![](https://i.imgur.com/c6fBf4t.png)
+Supports scrolling with the arrow keys <br><br>
+
+![](https://i.imgur.com/0OzgptH.png) <br>
+Edit your files in hex supereasy 
+
+## Controls
+<table>
+<tr><th>Key</th><th>Function</th></tr>
+<tr><td>Arrow Keys</td><td>Move the cursor</td></tr>
+<tr><td>0-9 & A-F</td><td>Edit the current byte (All of your changes to the file will be displayed in red)</td></tr>
+<tr><td>Backspace</td><td>Remove the edit at the position of the cursor and restore the original byte</td></tr>
+<tr><td>Esc or q</td><td>Quit the program</td></tr>
+</table>
 
 ## Installation
 

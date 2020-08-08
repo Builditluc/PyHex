@@ -1,5 +1,6 @@
+#!/bin/env python3.8
 """
-PyHex is a simple python Hex viewer
+PyHex is a simple python Hex editor
 """
 
 import curses
@@ -149,7 +150,7 @@ class PyHex(Window):
         self.edited_position = 0
 
         # Creating the variables for the title
-        self.title = "PyHex - A Python Hex Viewer"
+        self.title = "PyHex - A Python Hex Editor"
 
         self.title_x = int
         self.title_y = 0
