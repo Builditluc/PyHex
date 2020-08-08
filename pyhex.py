@@ -1,4 +1,3 @@
-#!/bin/env python3.8
 """
 PyHex is a simple python Hex viewer
 """
@@ -123,6 +122,9 @@ class PyHex(Window):
         self.columns = 16
         self.last_line = curses.LINES - 2
 
+        self.changed = False
+        self.save_dialog = False
+
         self.max_lines = self.last_line - 3  # Max number of lines on the screen
         self.top_line = self.bottom_line = 0  # The lines at the top and the bottom of the screen
         self.edit_lines = self.encoded_lines = self.decoded_lines = self.offset_lines = []
@@ -214,8 +216,23 @@ class PyHex(Window):
         curses.init_pair(5, curses.COLOR_RED, curses.COLOR_WHITE)  # Selected-Edited color
 
     def check_keys(self):
+        if self.save_dialog:
+            if self.key_pressed == ord("y"):
+                self.save()
+                self.exit()
+                return
+            if self.key_pressed == ord("n"):
+                self.changed = False
+                self.exit()
+                return
+            if self.key_pressed == curses.ascii.ESC:
+                self.save_dialog = False
+                self.status_bar_text = ""
+                return
+            return
+
         if self.key_pressed == curses.ascii.ESC or self.key_pressed == ord("q"):
-            sys.exit()
+            self.exit()
 
         if self.key_pressed == curses.KEY_UP:
             self.scroll_vertically(self.up_scroll)
@@ -263,6 +280,15 @@ class PyHex(Window):
         self.edit_lines = self.edited_array[self.top_line:self.top_line + self.max_lines]
         self.offset_lines = self.offset_text[self.top_line:self.top_line + self.max_lines]
 
+        # Calculate the Status Bar Text
+        if self.changed:
+            self.status_bar_text = "* "
+        else:
+            self.status_bar_text = ""
+
+        if self.save_dialog:
+            self.status_bar_text = "Would you like to save your file? y,n,esc"
+
     def late_update(self):
         self._draw_box()
         self._draw_titles()
@@ -270,6 +296,16 @@ class PyHex(Window):
         self._draw_encoded()
         self._draw_decoded()
         self._draw_status_bar()
+
+
+        self.draw_text(0, 0, "Case: " + str(self.save_dialog), 5)
+
+    def exit(self):
+        if self.changed:
+            self.save_dialog = True
+            return
+
+        sys.exit()
 
     def _draw_box(self):
         # Draw the Horizontal lines
@@ -494,11 +530,13 @@ class PyHex(Window):
                     if self.edited_position == 0:
                         self.edited_array[_y][_x] = str(char) + self.edited_array[_y][_x][1:]
                         self.edited_position = 1
+                        self.changed = True
                         return
 
                     if self.edited_position == 1:
                         self.edited_array[_y][_x] = self.edited_array[_y][_x][:1] + str(char)
                         self.edited_position = 0
+                        self.changed = True
                         self.scroll_horizontally(self.right_scroll)
                         return
 
@@ -508,17 +546,49 @@ class PyHex(Window):
         :param cursor_y: The y coordinate of the cursor in the array
         :param cursor_x: The x coordinate of the cursor in the array
         """
+        no_edit = True
         # Clear the byte in the edited array
         for _y, line in enumerate(self.edited_array):
-            for _x in range(0, len(line)):
+            for _x, byte in enumerate(line):
                 if _y == cursor_y and _x == cursor_x:
                     self.edited_array[_y][_x] = "--"
 
                     # When the byte was cleared, move the cursor to the left
                     self.scroll_horizontally(self.left_scroll)
                     self.edited_position = 0
-                    return
 
+                if byte != "--":
+                    no_edit = False
+
+        if no_edit:
+            self.changed = False
+
+    def save(self):
+        """
+        Saves the content to the opened file
+        """
+        file_content = b''
+
+        for _y, line in enumerate(self.file.hex_array):
+            for _x, byte in enumerate(line):
+                edited_byte = self.edited_array[_y][_x]
+                if edited_byte == "--":
+                    hex_byte = byte
+                elif edited_byte[:1] == "-":
+                    hex_byte = byte[:1] + edited_byte[1:]
+                elif edited_byte[1:] == "-":
+                    hex_byte = edited_byte[:1] + byte[1:]
+                else:
+                    hex_byte = edited_byte
+                file_content += bytes.fromhex(hex_byte)
+
+        with open(self.filename, "wb") as f:
+            f.write(file_content)
+            f.close()
+
+        self.changed = False
+        self.save_dialog = False
+        self.exit()
 
 if __name__ == '__main__':
     app: Application = Application()

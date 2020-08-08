@@ -1,4 +1,4 @@
-"""
+""""
 Simple classes for the PyHex Window and Application
 """
 
@@ -99,6 +99,10 @@ class Window:
         """
         curses.curs_set(state)
 
+    def exit(self):
+        """
+        This function will be called, when the program closes
+        """
 
 class Application:
     """
@@ -121,9 +125,9 @@ class Application:
 
         # Check, if the terminal supports colors and activates the NoDelay mode, if enabled
         self.colormode = curses.has_colors()
-        self.no_delay = True
-        if self.no_delay:
-            self.stdscr.nodelay(True)
+        #self.no_delay = True
+        #if self.no_delay:
+        #    self.stdscr.nodelay(True)
 
     def set_main_window(self, window: Window):
         """
