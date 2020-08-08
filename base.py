@@ -125,9 +125,9 @@ class Application:
 
         # Check, if the terminal supports colors and activates the NoDelay mode, if enabled
         self.colormode = curses.has_colors()
-        #self.no_delay = True
-        #if self.no_delay:
-        #    self.stdscr.nodelay(True)
+        self.no_delay = True
+        if self.no_delay:
+            self.stdscr.nodelay(True)
 
     def set_main_window(self, window: Window):
         """

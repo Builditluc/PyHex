@@ -219,16 +219,11 @@ class PyHex(Window):
         if self.save_dialog:
             if self.key_pressed == ord("y"):
                 self.save()
-                self.exit()
-                return
             if self.key_pressed == ord("n"):
-                self.changed = False
+                self.changed = self.save_dialog = False
                 self.exit()
-                return
             if self.key_pressed == curses.ascii.ESC:
-                self.save_dialog = False
-                self.status_bar_text = ""
-                return
+                self.save_dialog, self.status_bar_text = False, ""
             return
 
         if self.key_pressed == curses.ascii.ESC or self.key_pressed == ord("q"):
@@ -287,7 +282,7 @@ class PyHex(Window):
             self.status_bar_text = ""
 
         if self.save_dialog:
-            self.status_bar_text = "Would you like to save your file? y,n,esc"
+            self.status_bar_text = " | Would you like to save your file? y,n,esc"
 
     def late_update(self):
         self._draw_box()
@@ -296,9 +291,6 @@ class PyHex(Window):
         self._draw_encoded()
         self._draw_decoded()
         self._draw_status_bar()
-
-
-        self.draw_text(0, 0, "Case: " + str(self.save_dialog), 5)
 
     def exit(self):
         if self.changed:
@@ -582,9 +574,9 @@ class PyHex(Window):
                     hex_byte = edited_byte
                 file_content += bytes.fromhex(hex_byte)
 
-        with open(self.filename, "wb") as f:
-            f.write(file_content)
-            f.close()
+        with open(self.filename, "wb") as _f:
+            _f.write(file_content)
+            _f.close()
 
         self.changed = False
         self.save_dialog = False
