@@ -22,7 +22,7 @@ Edit your files in hex supereasy
 <tr><th>Key</th><th>Function</th></tr>
 <tr><td>Arrow Keys</td><td>Move the cursor</td></tr>
 <tr><td>0-9 & A-F</td><td>Edit the current byte (All of your changes to the file will be displayed in red)</td></tr>
-<tr><td>Backspace</td><td>Remove the edit at the position of the cursor and restore the original byte</td></tr>
+<tr><td>Delete</td><td>Remove the edit at the position of the cursor and restore the original byte</td></tr>
 <tr><td>Esc or q</td><td>Quit the program</td></tr>
 </table>
 
