@@ -3,7 +3,6 @@
 
 `PyHex` is a simple python hex editor for the terminal
 
-[![GitHub version](https://badge.fury.io/gh/builditluc%2Fpyhex.svg)](https://badge.fury.io/gh/builditluc%2Fpyhex)
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 [![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.png?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
