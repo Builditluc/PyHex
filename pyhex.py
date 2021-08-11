@@ -1,4 +1,4 @@
-#!/bin/env python3.8
+#!/usr/bin/env python3.8
 """
 PyHex is a simple python Hex editor
 """
@@ -298,6 +298,7 @@ class PyHex(Window):
             self.save_dialog = True
             return
 
+        curses.endwin()
         sys.exit()
 
     def _draw_box(self):
