@@ -125,7 +125,7 @@ class Application:
 
         # Check, if the terminal supports colors and activates the NoDelay mode, if enabled
         self.colormode = curses.has_colors()
-        self.no_delay = True
+        self.no_delay = False
         if self.no_delay:
             self.stdscr.nodelay(True)
 
@@ -141,6 +141,14 @@ class Application:
         This function starts the Programm
         :param time_wait: Time to wait between the frame updates
         """
+
+        # Draw the window at beginning 
+        self.window.height, self.window.width = self.stdscr.getmaxyx()
+        self.window.update()
+        self.stdscr.erase()
+        self.window.late_update()
+        self.window._update_screen()
+
         while True:
             self.window.window_update()
             time.sleep(time_wait)
