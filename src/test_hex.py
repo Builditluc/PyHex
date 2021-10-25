@@ -1,4 +1,4 @@
-from hex import HexFile, HexConverter
+from .hex import HexFile, HexConverter
 
 import unittest, os, string
 from enum import Enum
@@ -8,9 +8,9 @@ HEX_DATA = ['54', '65', '73', '74', '20', '31', '32', '33', '21', '9', 'A', '31'
 ASCII_DATA = ['T', 'e', 's', 't', '.', '1', '2', '3', '!', '.', '.', '1', '2', '3', '5', '@', '@']
 
 class TestDataSpecialChars(Enum):
-    Bytes = b'\t\n\r\x0b\x0c\x00'
-    Hex = ['9', 'A', 'D', 'B', 'C', '00']
-    Text = ['.', '.', '.', '.', '.', '.']
+    Bytes = b'\t\n\r\x0b\x0c\x00\x20'
+    Hex = ['9', 'A', 'D', 'B', 'C', '00', '20']
+    Text = ['.', '.', '.', '.', '.', '.', '.']
 
 class TestDataAsciiChars(Enum):
     Bytes = b'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
@@ -23,6 +23,12 @@ class TestDataAsciiChars(Enum):
     Text = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
 
 class TestHexFile(unittest.TestCase):
+    def testInit(self) -> None:
+        with open(TESTDATA_PATH, "w") as f:
+            f.write("Test")
+
+        self.assertEqual(HexConverter(content=b"Test").bytes, HexFile(path=TESTDATA_PATH).converter.bytes)
+
     def testWrongPath(self) -> None:
         self.assertRaises(FileNotFoundError, HexFile, "blahblahblah")
     
@@ -36,7 +42,7 @@ class TestHexFile(unittest.TestCase):
             f.write("")
 
         file = HexFile(path=TESTDATA_PATH)
-        file.converter = HexConverter(bytes=b"")
+        file.converter = HexConverter(content=b"")
 
         self.assertListEqual([], file.hex)
         self.assertListEqual([], file.ascii)
@@ -50,28 +56,30 @@ class TestHexFile(unittest.TestCase):
         self.assertListEqual(HEX_DATA, file.hex)
         self.assertListEqual(ASCII_DATA, file.ascii)
 
-        self.assertCountEqual(file.hex, file.ascii)
-
 class TestHexConverter(unittest.TestCase):
+    def testInit(self) -> None:
+        testData = b"12345"
+        self.assertEqual(testData, HexConverter(content=testData).bytes)
+
     def testWrongType(self) -> None:
         self.assertRaises(ValueError, HexConverter, "blah")
         self.assertRaises(ValueError, HexConverter, True)
         self.assertRaises(ValueError, HexConverter, 123)
     
     def testEmptyData(self) -> None:
-        converter = HexConverter(bytes=b"")
+        converter = HexConverter(content=b"")
 
         self.assertListEqual([], converter.hex())
         self.assertListEqual([], converter.ascii())
 
     def testAsciiConversion(self) -> None:
-        converter = HexConverter(bytes=TestDataAsciiChars.Bytes.value)
+        converter = HexConverter(content=TestDataAsciiChars.Bytes.value)
         
-        self.assertListEqual(TestDataAsciiChars.Hex.value, converter.hex())
-        self.assertListEqual(TestDataAsciiChars.Text.value, converter.ascii())
+        self.assertEqual(TestDataAsciiChars.Hex.value, converter.hex())
+        self.assertEqual(TestDataAsciiChars.Text.value, "".join(converter.ascii()))
     
     def testSpecialConversion(self) -> None:
-        converter = HexConverter(bytes=TestDataSpecialChars.Bytes.value)
+        converter = HexConverter(content=TestDataSpecialChars.Bytes.value)
         
-        self.assertListEqual(TestDataSpecialChars.Hex.value, converter.hex())
-        self.assertListEqual(TestDataSpecialChars.Text.value, converter.ascii())
+        self.assertEqual(TestDataSpecialChars.Hex.value, converter.hex())
+        self.assertEqual(TestDataSpecialChars.Text.value, converter.ascii())
