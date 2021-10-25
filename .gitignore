@@ -130,3 +130,7 @@ dmypy.json
 
 
 .direnv/
+
+.envrc
+src/testdata
+src/testreport
